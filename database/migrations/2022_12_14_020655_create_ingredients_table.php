@@ -17,7 +17,9 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->integer('stock')->comment('by grams');
-            $table->boolean('our_of_stock_notification');
+            $table->boolean('our_of_stock_notification')->comment(
+                'true when notified, false when full [updated after less %50 or refill]'
+            )->default(false);
             $table->timestamps();
         });
     }
