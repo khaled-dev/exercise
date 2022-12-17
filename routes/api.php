@@ -18,3 +18,4 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('products', [ProductController::class, 'index'])->name('products.list');
 Route::get('orders', [OrderController::class, 'index'])->name('orders.list');
+Route::post('orders', [OrderController::class, 'store'])->name('orders.store');

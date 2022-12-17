@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\OrderCollection;
 use App\Http\Resources\OrderResource;
+use App\Http\Services\IngredientService;
 use App\Models\Order;
 use Illuminate\Http\Request;
 
@@ -19,13 +20,24 @@ class OrderController extends Controller
         return new OrderCollection(Order::all());
     }
 
-    public function store(): OrderResource
+    public function store(Request $request): OrderResource
     {
-        // validate inputs
-        // validate stock
-        // orderService (orderBuilder, sendEmail[after-creation], update stock)
+        // TODO: move it
+        $request->validate([
+            'products'              => 'required|array',
+            'products.*.product_id' => 'required|exists:products,id',
+            'products.*.quantity'   => 'required|integer|max_digits:1000', //TODO: more than 0
+        ]);
+
+        $ingredientService = new IngredientService($request);
+
+        if ($ingredientService->verifyStock() !== null) {
+            // TODO: handle error message
+        }
+
+        $ingredientService->create();
 
 
-        return new OrderResource();
+        return new OrderResource(Order::all()->first());
     }
 }
