@@ -2,10 +2,26 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\IngredientStockUpdateStatementBuilder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Ingredient extends Model
 {
     use HasFactory;
+
+    public static function updateStock(Collection $weights): bool
+    {
+        $statementBuilder = new IngredientStockUpdateStatementBuilder();
+
+        $weights->each(function ($ingredientWeight) use ($statementBuilder) {
+            $statementBuilder->deductIngredientWeight($ingredientWeight->id, $ingredientWeight->weights);
+        });
+
+        return DB::statement(
+            DB::raw($statementBuilder->build())
+        );
+    }
 }
