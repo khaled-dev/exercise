@@ -17,7 +17,7 @@ class OrderFactory extends Factory
     public function definition()
     {
         return [
-            'total_price' => fake()->randomFloat(),
+            //
         ];
     }
 }

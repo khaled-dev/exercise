@@ -18,27 +18,26 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // create ingredients
-        // products
-        // orders
-
         $beef = Ingredient::factory()->create([
-            'name' => 'Beef',
-            'stock' => 20000,
+            'name'          => 'Beef',
+            'stock'         => 20000,
+            'maximum_stock' => 20000,
         ]);
         $chicken = Ingredient::factory()->create([
-            'name' => 'Chicken',
-            'stock' => 20000,
+            'name'          => 'Chicken',
+            'stock'         => 20000,
+            'maximum_stock' => 20000,
         ]);
         $cheese = Ingredient::factory()->create([
-            'name' => 'Cheese',
-            'stock' => 5000,
+            'name'          => 'Cheese',
+            'stock'         => 5000,
+            'maximum_stock' => 5000,
         ]);
         $onion = Ingredient::factory()->create([
-            'name' => 'Onion',
-            'stock' => 1000,
+            'name'          => 'Onion',
+            'stock'         => 1000,
+            'maximum_stock' => 1000,
         ]);
-
 
         $beefBurger = Product::factory()
             ->create(['name'  => 'Beef Burger', 'price' => 100]);
