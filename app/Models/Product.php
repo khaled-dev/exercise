@@ -22,6 +22,11 @@ class Product extends Model
         'price',
     ];
 
+    public function getConvertedPriceAttribute(): string
+    {
+        return $this->price . ' EGP';
+    }
+
     public function recipes(): HasMany
     {
         return $this->hasMany(Recipe::class);

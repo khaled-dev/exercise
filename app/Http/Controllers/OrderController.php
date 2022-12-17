@@ -35,9 +35,6 @@ class OrderController extends Controller
             // TODO: handle error message
         }
 
-        $ingredientService->create();
-
-
-        return new OrderResource(Order::all()->first());
+        return new OrderResource($ingredientService->create());
     }
 }
