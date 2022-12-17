@@ -3,12 +3,13 @@
 namespace App\Http\Services;
 
 use App\Http\Services\Concerns\StockValidator;
-use App\Models\Concerns\IngredientStockUpdateStatementBuilder;
+use App\Mail\OutOfStockNotifyMail;
 use App\Models\Ingredient;
 use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class IngredientService
 {
@@ -33,7 +34,7 @@ class IngredientService
 
     public function create()
     {
-        $order = Order::create(['total_price' => 3]);
+        $order = Order::create();
 
         foreach ($this->extractProductsFromRequest() as $product) {
             for ($q = $product['quantity']; $q > 0; $q--) {
@@ -41,17 +42,32 @@ class IngredientService
             }
         }
 
-        // update stock //
-        // get products -> min weight from ingredients
         Ingredient::updateStock($this->requestedIngredientQuantity);
 
+        $this->handleStockRefillment();
 
-        // email event  //
-        // check the flag
-        // if false -> check the 50%
-        // if less -> send an email & update the flag
+        return $order;
+    }
 
+    private function handleStockRefillment()
+    {
+        $ingredients = Ingredient::whereIn(
+            'id',$this->requestedIngredientQuantity->pluck('id')
+        )->get();
 
+        foreach ($ingredients as $ingredient) {
+            if ($ingredient->our_of_stock_notification) {
+                continue;
+            }
+
+            if ($ingredient->stock_below_safe_point) {
+                // send email
+                Mail::to('refillment@guy.com')->send(new OutOfStockNotifyMail($ingredient));
+
+                // update the flag
+                $ingredient->update(['our_of_stock_notification' => 1]);
+            }
+        }
     }
 
     private function extractProductsFromRequest(): array

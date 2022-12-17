@@ -12,6 +12,12 @@ class Ingredient extends Model
 {
     use HasFactory;
 
+
+    public function getStockBelowSafePointAttribute(): bool
+    {
+        return $this->stock < ($this->maximum_stock / 2);
+    }
+
     public static function updateStock(Collection $weights): bool
     {
         $statementBuilder = new IngredientStockUpdateStatementBuilder();
