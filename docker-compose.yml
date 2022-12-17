@@ -1,6 +1,7 @@
 version: '3'
 services:
     foodics-app:
+        container_name: foodics_app
         build:
             context: ./docker
             dockerfile: Dockerfile
@@ -15,6 +16,7 @@ services:
         depends_on:
             - foodics-db
     foodics-db:
+        container_name: foodics_db
         image: mysql:8.0.31
         environment:
             MYSQL_DATABASE: ${DB_DATABASE:-foodics}
@@ -23,6 +25,14 @@ services:
             - foodics-volume:/var/lib/mysql
         ports:
             - '23306:3306'
+        networks:
+            - foodics-network
+    foodics-mailer:
+        container_name: foodics_mailer
+        image: 'mailhog/mailhog:latest'
+        ports:
+            - '${FORWARD_MAILHOG_PORT:-1025}:1025'
+            - '${FORWARD_MAILHOG_DASHBOARD_PORT:-8025}:8025'
         networks:
             - foodics-network
 networks:
