@@ -14,24 +14,51 @@ use Illuminate\Support\Facades\Mail;
 class IngredientService
 {
 
+    /**
+     * Collection of ingredient,requested quantity.
+     *
+     * @var Collection
+     */
     private Collection $requestedIngredientQuantity;
+
+    /**
+     * stock validator service class.
+     *
+     * @var StockValidator
+     */
+    private StockValidator $stockValidator;
 
     public function __construct(private Request $request)
     {
         $this->requestedIngredientQuantity = Product::ingredientQuantity($this->extractProductsIdFromRequest())->get();
+        $this->stockValidator              = new StockValidator($this->requestedIngredientQuantity);
     }
 
-    public function verifyStock():? array
+    /**
+     * check has some out of stock ingredient
+     *
+     * @return bool
+     */
+    public function isOutOfStock(): bool
     {
-        $stockValidator = new StockValidator($this->requestedIngredientQuantity);
-
-        if ($stockValidator->validate()) {
-            return null;
-        }
-
-        return $stockValidator->getMissingItemsIdName();
+        return ! $this->stockValidator->validate();
     }
 
+    /**
+     * returns the out of stock ingredient name
+     *
+     * @return array
+     */
+    public function getMissingItemsNames(): array
+    {
+        return $this->stockValidator->getMissingItemsIdName();
+    }
+
+    /**
+     * Holds the order creation logic.
+     *
+     * @return mixed
+     */
     public function create()
     {
         $order = Order::create();
@@ -49,6 +76,11 @@ class IngredientService
         return $order;
     }
 
+    /**
+     * Request a refillment if needed
+     *
+     * @return void
+     */
     private function handleStockRefillment()
     {
         $ingredients = Ingredient::whereIn(
@@ -70,11 +102,21 @@ class IngredientService
         }
     }
 
+    /**
+     * returns products from the payload.
+     *
+     * @return array
+     */
     private function extractProductsFromRequest(): array
     {
         return $this->request->get('products');
     }
 
+    /**
+     * returns product ids from the payload.
+     *
+     * @return array
+     */
     private function extractProductsIdFromRequest(): array
     {
         return array_column($this->extractProductsFromRequest(), 'product_id');

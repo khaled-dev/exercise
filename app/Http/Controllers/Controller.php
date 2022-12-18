@@ -10,4 +10,12 @@ use Illuminate\Routing\Controller as BaseController;
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+
+    protected function invalidInputResponse(string $errorMessage)
+    {
+        return response([
+            "message"   => "The given data was invalid.",
+            "errors"    => $errorMessage
+        ], 422);
+    }
 }

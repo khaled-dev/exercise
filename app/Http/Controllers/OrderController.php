@@ -7,6 +7,7 @@ use App\Http\Resources\OrderCollection;
 use App\Http\Resources\OrderResource;
 use App\Http\Services\IngredientService;
 use App\Models\Order;
+use \Illuminate\Http\Response;
 
 class OrderController extends Controller
 {
@@ -20,12 +21,16 @@ class OrderController extends Controller
         return new OrderCollection(Order::all());
     }
 
-    public function store(StoreOrderRequest $request): OrderResource
+    public function store(StoreOrderRequest $request): OrderResource|Response
     {
         $ingredientService = new IngredientService($request);
 
-        if ($ingredientService->verifyStock() !== null) {
-            // TODO: handle error message
+        if ($ingredientService->isOutOfStock()) {
+            return $this->invalidInputResponse(
+                '[ '
+                . implode(', ', $ingredientService->getMissingItemsNames())
+                . ' ] out of stock.',
+            );
         }
 
         return new OrderResource(
