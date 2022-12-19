@@ -3,7 +3,7 @@
 namespace App\Http\Services\Concerns;
 
 use App\Models\Ingredient;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Builder;
 
 class StockValidator
@@ -36,7 +36,7 @@ class StockValidator
     public function validate(): bool
     {
         $this->ingredientWeights->each(function ($ingredientWeight)  {
-            $this->addIngredientWeight($ingredientWeight->id, $ingredientWeight->weights);
+            $this->addIngredientWeight($ingredientWeight->getId(), $ingredientWeight->getWeight());
         });
 
         $this->queryResult = $this->query->get();
@@ -54,8 +54,8 @@ class StockValidator
         $missingItems = [];
 
         foreach ($this->ingredientWeights as $productWeight) {
-            if ($this->queryResult->find($productWeight->id) === null) {
-                $missingItems[$productWeight->id] = $productWeight->name;
+            if ($this->queryResult->find($productWeight->getId()) === null) {
+                $missingItems[$productWeight->getId()] = $productWeight->getName();
             }
         }
 
