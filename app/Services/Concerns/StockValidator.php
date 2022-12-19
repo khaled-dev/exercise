@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Services\Concerns;
+namespace App\Services\Concerns;
 
 use App\Models\Ingredient;
-use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 
 class StockValidator
 {

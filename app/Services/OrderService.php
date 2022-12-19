@@ -6,19 +6,20 @@ use App\Mail\OutOfStockNotifyMail;
 use App\Models\Ingredient;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\Recipe;
 use App\Services\Concerns\StockValidator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Mail;
 
-class IngredientService
+class OrderService
 {
     /**
-     * Collection of ingredient,requested quantity.
+     * Collection of ingredient,requested recipe weights.
      *
      * @var Collection
      */
-    private Collection $requestedIngredientWeights;
+    private Collection $recipeWeights;
 
     /**
      * stock validator service class.
@@ -29,9 +30,8 @@ class IngredientService
 
     public function __construct(private Request $request)
     {
-        //TODO: rename
-        $this->requestedIngredientWeights = Product::ingredientQuantity($this->extractProductsFromRequest())->ingredientQuantityUnique();
-        $this->stockValidator              = new StockValidator($this->requestedIngredientWeights);
+        $this->recipeWeights  = Product::RecipeWeights($this->extractProductsFromRequest())->RecipeWeightsDistinct();
+        $this->stockValidator = new StockValidator($this->recipeWeights);
     }
 
     /**
@@ -68,7 +68,8 @@ class IngredientService
                 $order->products()->attach($product['product_id']);
             }
         }
-        Ingredient::updateStock($this->requestedIngredientWeights);
+
+        Ingredient::updateStock($this->recipeWeights);
 
         $this->handleStockRefillment();
 
@@ -83,7 +84,7 @@ class IngredientService
     private function handleStockRefillment()
     {
         $ingredients = Ingredient::whereIn(
-            'id', $this->requestedIngredientWeights->keys()
+            'id', $this->recipeWeights->keys()
         )->get();
 
         foreach ($ingredients as $ingredient) {

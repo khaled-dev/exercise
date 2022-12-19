@@ -15,7 +15,7 @@ class Controller extends BaseController
     {
         return response([
             "message"   => "The given data was invalid.",
-            "errors"    => $errorMessage
+            "errors"    => [ $errorMessage ]
         ], 422);
     }
 }

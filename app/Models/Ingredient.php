@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\IngredientStockUpdateStatementBuilder;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -29,7 +29,7 @@ class Ingredient extends Model
         $statementBuilder = new IngredientStockUpdateStatementBuilder();
 
         $weights->each(function ($ingredientWeight) use ($statementBuilder) {
-            $statementBuilder->deductIngredientWeight($ingredientWeight->id, $ingredientWeight->weights);
+            $statementBuilder->deductIngredientWeight($ingredientWeight->getId(), $ingredientWeight->getWeight());
         });
 
         return DB::statement(
