@@ -22,9 +22,26 @@ docker-compose up
 ###
 > If port 80 already taken, try to change the env variable `APP_PORT` and rerun the previous command
 ###
-> If you wish to verify mailing notifications, check `MailHog` service on `http://localhost:8025/`.
-> 
->You can change it to your favorite port by changing variable `FORWARD_MAILHOG_DASHBOARD_PORT`
+
+#### Run database migrations and seed
+```
+docker exec -it foodics_app php artisan migrate
+
+docker exec -it foodics_app php artisan db:seed
+```
+
+#### To re-migrate the database
+```
+docker exec -it foodics_app php artisan migrate:fresh
+```
+
+#### For mailing dashboard `MailHog` check the following URI
+```
+http://localhost:8025/
+```
+
+###
+> If port 8025 already taken, try to change the env variable `FORWARD_MAILHOG_DASHBOARD_PORT` and restart the containers
 ###
 
 #### Run the tests
