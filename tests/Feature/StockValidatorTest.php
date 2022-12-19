@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\DataTransferObjects\IngredientWeightDTO;
+use App\DataTransferObjects\RecipeWeightDTO;
 use App\Models\Ingredient;
 use App\Services\Concerns\StockValidator;
 use Illuminate\Database\Eloquent\Collection;
@@ -28,12 +28,12 @@ class StockValidatorTest extends TestCase
 
         // id, name, wights
         $ingredientWeights = new Collection([
-            new IngredientWeightDTO(
+            new RecipeWeightDTO(
                 $beef->id,
                 $beef->name,
                 20,
             ),
-            new IngredientWeightDTO(
+            new RecipeWeightDTO(
                 $chicken->id,
                 $chicken->name,
                 20,
@@ -64,12 +64,12 @@ class StockValidatorTest extends TestCase
 
         // id, name, wights
         $ingredientWeights = new Collection([
-            new IngredientWeightDTO(
+            new RecipeWeightDTO(
                 $beef->id,
                 $beef->name,
                 201,
             ),
-            new IngredientWeightDTO(
+            new RecipeWeightDTO(
                 $chicken->id,
                 $chicken->name,
                 20,

@@ -2,7 +2,7 @@
 
 namespace App\DataTransferObjects;
 
-class IngredientWeightDTO
+class RecipeWeightDTO
 {
 
     public function __construct(private int $id, private string $name, private int $weight)

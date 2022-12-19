@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\DataTransferObjects\IngredientWeightDTO;
+use App\DataTransferObjects\RecipeWeightDTO;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -52,7 +52,7 @@ class Product extends Model
     {
         return collect(
             $q->get()->groupBy('id')->map(function ($ingredientWeight) {
-                return new IngredientWeightDTO(
+                return new RecipeWeightDTO(
                     $ingredientWeight->first()->id,
                     $ingredientWeight->first()->name,
                     $ingredientWeight->sum('weights'),
